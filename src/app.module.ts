@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
-import { UserService } from './user/user.service';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [GraphQLModule.forRoot({
@@ -27,6 +27,7 @@ import { UserService } from './user/user.service';
     migrationsRun: true
   }),
   UserModule,
+  LoginModule
 ],
   controllers: [AppController],
   providers: [AppService],

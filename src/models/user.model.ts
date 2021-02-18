@@ -3,7 +3,6 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
 @Entity()
-
 export class UserModel {
     @Field()
     @PrimaryGeneratedColumn( "rowid" )
@@ -12,6 +11,10 @@ export class UserModel {
     @Field()
     @Column( {type: "varchar", length: 255, unique: true } )
     username: string;
+
+    @Field()
+    @Column( {type: "varchar", length: 255 } )
+    password: string;
 
     @Field()
     @Column( {type: "varchar", length: 255 } )
