@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-//TODO implementar un ocntador, para que cuando se cambie la contraseña, se invaliden todos los tokens anteriores
+//TODO implementar un contador, para que cuando se cambie la contraseña, se invaliden todos los tokens anteriores
 //TODO plantearse eliminar el login como modulo, y que toodo lo haga el user
 
 @ObjectType()
@@ -26,4 +26,8 @@ export class UserModel {
     @Field()
     @Column( {type: "varchar", length: 255 } )
     lastname: string;
+
+    @Field()
+    @Column( {type: "varchar", length: 255 } )
+    counter: string;
 }
