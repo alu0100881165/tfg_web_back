@@ -1,0 +1,27 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserModel {
+  id: Float!
+  username: String!
+  password: String!
+  firstname: String!
+  lastname: String!
+}
+
+type LoginModel {
+  username: String!
+  password: String!
+}
+
+type Query {
+  getAllUsers: [UserModel!]!
+  getUser(password: String!, username: String!): UserModel!
+  login(password: String!, username: String!): LoginModel!
+}
+
+type Mutation {
+  createUser(lastname: String!, firstname: String!, password: String!, username: String!): UserModel!
+  deleteUser(username: String!): UserModel!
+}

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserDTO } from "src/dto/user.dto";
+import { hashPassword } from "src/utils/hash";
 import { getConnection, Repository } from "typeorm";
 import { UserModel } from '../models/user.model';
 import { UserModule } from './user.module';
@@ -11,8 +12,10 @@ export class UserService {
         @InjectRepository(UserModel) private userRepository: Repository<UserModel>
     ){}
 
-    async create(data: UserDTO): Promise<UserModel> {
-        return await this.userRepository.save(data);
+    async create(user: UserDTO): Promise<UserModel> {
+        user.password = await hashPassword(user);
+
+        return await this.userRepository.save(user);
     }
 
     async findAll(): Promise<UserModel[]> {
@@ -22,9 +25,10 @@ export class UserService {
     async findOne(username: string, password: string): Promise<UserModel> {
         const user = await this.userRepository.findOne({ where: {username: username} });
 
-        if( user.password === password ){
-            return user;
-        }
+        if(user)
+            if( user.password === password ){
+                return user;
+            }
         const badUser: UserModel = {
             id: -1,
             username: "",

@@ -1,7 +1,5 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
 import { UserModel } from "src/models/user.model";
-import { Repository } from "typeorm";
 import { LoginModel } from '../models/login.model';
 import { UserService } from '../user/user.service';
 
@@ -14,16 +12,21 @@ export class LoginService {
     async login(username: string, password: string): Promise<LoginModel> {
         console.log("Petición de login");
 
-        // if(username && password) {  // controlar que la password es correcta, encriptarla y desencriptarla
-        //     return this.userService.findOne(username, password);
-        // }
-        // const badLogin: LoginModel = {
-        //     username: "",
-        //     password: "",
-        // }
+        if(username && password) {  // controlar que la password es correcta, encriptarla y desencriptarla
+            const user: UserModel = await this.userService.findOne(username, password);
 
-        // return badLogin;
+            const logger: LoginModel = {
+                username: user.username,
+                password: user.password
+            }
 
-        return this.userService.findOne(username, password);
+            return logger;
+        }
+        const badLogger: LoginModel = {
+            username: "",
+            password: "",
+        }
+
+        return badLogger;
     }
 }

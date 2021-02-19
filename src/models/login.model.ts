@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql';
 
-ObjectType()
+@ObjectType()
 export class LoginModel{
     @Field()
     username: string
