@@ -25,10 +25,26 @@ export class UserService {
     async findOne(username: string, password: string): Promise<UserModel> {
         const user = await this.userRepository.findOne({ where: {username: username} });
 
+        if(user && user.password === password)
+            return user;
+
+        const badUser: UserModel = {
+            id: -1,
+            username: "",
+            password: "",
+            firstname: "",
+            lastname: ""
+        }
+
+        return badUser
+    }
+
+    async findByUsername(username: string): Promise<UserModel> {
+        const user = await this.userRepository.findOne({ where: {username: username} });
+
         if(user)
-            if( user.password === password ){
-                return user;
-            }
+            return user;
+
         const badUser: UserModel = {
             id: -1,
             username: "",

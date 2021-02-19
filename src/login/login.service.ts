@@ -1,5 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { UserModel } from "src/models/user.model";
+import { checkPassword } from "src/utils/hash";
 import { LoginModel } from '../models/login.model';
 import { UserService } from '../user/user.service';
 
@@ -13,14 +14,17 @@ export class LoginService {
         console.log("Petición de login");
 
         if(username && password) {  // controlar que la password es correcta, encriptarla y desencriptarla
-            const user: UserModel = await this.userService.findOne(username, password);
+            const user: UserModel = await this.userService.findByUsername(username);
 
-            const logger: LoginModel = {
-                username: user.username,
-                password: user.password
+            if(checkPassword(user, password)) {
+                
+                const logger: LoginModel = {
+                    username: user.username,
+                    password: user.password
+                }
+    
+                return logger;
             }
-
-            return logger;
         }
         const badLogger: LoginModel = {
             username: "",
