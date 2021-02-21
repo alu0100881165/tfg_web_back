@@ -5,6 +5,7 @@ import { UserModel } from "src/models/user.model";
 import { checkPassword } from "src/utils/hash";
 import { LoginModel } from '../models/login.model';
 import { UserService } from '../user/user.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class LoginService {
@@ -32,11 +33,31 @@ export class LoginService {
                 return logger;
             }
         }
+
         const badLogger: LoginModel = {
             username: "",
             password: "",
         }
 
         return badLogger;
+    }
+
+    async validateUser(username: string, password: string): Promise<UserModel> {
+        const user = await this.userService.findByUsername(username);
+
+        if(user && bcrypt.compare(user.password, password)) {
+            return user
+        }
+
+        const badUser: UserModel = {
+            id: -1,
+            username: "",
+            password: "",
+            firstname: "",
+            lastname: "",
+            counter: -1
+        }
+
+        return badUser 
     }
 }
