@@ -12,14 +12,15 @@ type UserModel {
 }
 
 type LoginModel {
-  username: String!
-  password: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
 type Query {
   getAllUsers: [UserModel!]!
   getUser(password: String!, username: String!): UserModel!
   login(password: String!, username: String!): LoginModel!
+  validateToken: UserModel!
 }
 
 type Mutation {

@@ -5,13 +5,27 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { LoginModule } from './login/login.module';
+import { validateToken } from './utils/hash';
+import { LoginService } from './login/login.service';
 
 @Module({
   imports: [GraphQLModule.forRoot({
     debug: true,
     playground: true,
     autoSchemaFile: 'schema.gql',
-    path: '/graphql'
+    path: '/graphql',
+    context: async ({ req }) => {
+      let user = null;
+
+      try {
+        if (req.headers.authorization) {
+          user = await validateToken(req.headers.authorization);
+        }
+      } catch (e) {
+        console.warn(`No se pudo autenticar el token.`);
+      }
+      return user;
+    }
   }),
   TypeOrmModule.forRoot({
     type: 'postgres',

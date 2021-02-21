@@ -3,8 +3,8 @@ import { ObjectType, Field } from '@nestjs/graphql';
 @ObjectType()
 export class LoginModel{
     @Field()
-    username: string
+    accessToken: string
 
     @Field()
-    password: string
+    refreshToken: string
 }
