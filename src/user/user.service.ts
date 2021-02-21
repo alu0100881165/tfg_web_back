@@ -33,7 +33,8 @@ export class UserService {
             username: "",
             password: "",
             firstname: "",
-            lastname: ""
+            lastname: "",
+            counter: -1
         }
 
         return badUser
@@ -50,7 +51,8 @@ export class UserService {
             username: "",
             password: "",
             firstname: "",
-            lastname: ""
+            lastname: "",
+            counter: -1
         }
 
         return badUser

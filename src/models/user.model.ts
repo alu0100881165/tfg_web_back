@@ -28,6 +28,6 @@ export class UserModel {
     lastname: string;
 
     @Field()
-    @Column( {type: "varchar", length: 255 } )
-    counter: string;
+    @Column( {type: "integer", default: 0 } )
+    counter: number;
 }
