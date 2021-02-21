@@ -44,8 +44,6 @@ export class LoginService {
     // }
 
     async login(username: string, password: string): Promise<LoginModel> {
-        console.log("Petición de login");
-
         if(username && password) {  // controlar que la password es correcta, encriptarla y desencriptarla
             const user: UserModel = await this.userService.findByUsername(username);
 
@@ -55,7 +53,7 @@ export class LoginService {
 
                 const accessToken = sign({ id: user.id }, config.get('jwtSecret'), { expiresIn: '1800' });
 
-                console.log(accessToken);
+                // console.log(accessToken);
     
                 return {accessToken, refreshToken};
             }

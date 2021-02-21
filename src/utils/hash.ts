@@ -30,6 +30,7 @@ export async function checkPassword (user: UserDTO, password: string): Promise<b
 }
 
 export async function validateToken (bearer: string): Promise<UserModel>{
+
   const token = bearer.split(" ")[1];
 
   const payload = decode(token, config.get('jwtSecret'))
