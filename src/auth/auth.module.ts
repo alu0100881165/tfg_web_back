@@ -5,6 +5,7 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { get } from 'config';
 import { AuthResolver } from './auth.resolver';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
 	imports: [
@@ -13,7 +14,7 @@ import { AuthResolver } from './auth.resolver';
 			secret: get('JWT_ACCESS_SECRET'),
 		}),
 	],
-	providers: [AuthResolver, AuthService, JwtStrategy],
+	providers: [AuthResolver, AuthService, JwtStrategy, JwtAuthGuard],
 	exports: [AuthService],
 })
 export class AuthModule {}
