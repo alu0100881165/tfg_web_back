@@ -1,32 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDTO } from './dto/CreateUser.dto';
-import { UserModel } from './user.model';
+import { CreateUserDTO } from '../dto/CreateUser.dto';
+import { UserModel } from '../models/user.model';
 import { AuthService } from '../auth/auth.service';
-import { LoginUserDto } from './dto/LoginUser.dto';
+import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
-	constructor(
-		@InjectRepository(UserModel) private userRepository: Repository<UserModel>,
-		private authService: AuthService
-	) {}
+	constructor(@InjectRepository(UserModel) private userRepository: Repository<UserModel>) {}
 
 	async create(newUser: CreateUserDTO): Promise<UserModel> {
-		const userValid = await this.usernameExists(newUser.username);
-		if (!userValid) {
-			throw new Error('El usuario ya existe');
-		}
-
-		const emailValid = await this.emailExists(newUser.email);
-
-		if (!emailValid) {
-			throw new Error('El email ya está asignado a otra cuenta');
-		}
-
-		newUser.password = await this.authService.hashPassword(newUser.password);
-
 		return await this.userRepository.save(newUser);
 	}
 
@@ -42,24 +26,8 @@ export class UserService {
 		return await this.userRepository.findOne({ where: { email } });
 	}
 
-	async login(credentials: LoginUserDto): Promise<UserModel> {
-		const user = await this.findUser(credentials.username);
-
-		if (!user) {
-			throw new Error('El usuario no existe');
-		}
-
-		const valid = await this.validatePassword(credentials.password, user.password);
-
-		if (!valid) {
-			throw new Error('La contraseña es incorrecta');
-		}
-
-		return user;
-	}
-
 	async validatePassword(password: string, storedHash: string): Promise<boolean> {
-		return await this.authService.comparePassword(password, storedHash);
+		return await this.comparePassword(password, storedHash);
 	}
 
 	async usernameExists(username: string): Promise<boolean> {
@@ -80,5 +48,26 @@ export class UserService {
 		}
 
 		return true;
+	}
+
+	async hashPassword(password: string): Promise<string> {
+		const hashedPassword: string = await new Promise((resolve, reject) => {
+			hash(password, 12, function (err, hash) {
+				if (err) reject(err);
+				resolve(hash);
+			});
+		});
+
+		return hashedPassword;
+	}
+
+	async comparePassword(password: string, storedHash: string): Promise<boolean> {
+		const valid: boolean = await new Promise((resolve, reject) => {
+			compare(password, storedHash, function (err, isValid) {
+				if (err) reject(err);
+				resolve(isValid);
+			});
+		});
+		return valid;
 	}
 }

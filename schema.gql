@@ -11,11 +11,16 @@ type UserModel {
   counter: Float!
 }
 
+type LoginResponse {
+  accessToken: String!
+  user: UserModel!
+}
+
 type Query {
   findAll: [UserModel!]!
-  login(password: String!, username: String!): UserModel!
 }
 
 type Mutation {
+  login(password: String!, username: String!): LoginResponse!
   register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): UserModel!
 }

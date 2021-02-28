@@ -1,0 +1,4 @@
+{
+    "JWT_ACCESS_SECRET": "jwtProgresiveAppAccessControl",
+    "JWT_REFRESH_SECRET": "jwtProgresiveAppRefreshControl"
+}
