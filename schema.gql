@@ -1,0 +1,21 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserModel {
+  id: Float!
+  username: String!
+  email: String!
+  firstname: String!
+  lastname: String!
+  counter: Float!
+}
+
+type Query {
+  findAll: [UserModel!]!
+  login(password: String!, username: String!): UserModel!
+}
+
+type Mutation {
+  register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): UserModel!
+}

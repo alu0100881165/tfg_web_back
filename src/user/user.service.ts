@@ -14,9 +14,20 @@ export class UserService {
 	) {}
 
 	async create(newUser: CreateUserDTO): Promise<UserModel> {
+		const userValid = await this.usernameExists(newUser.username);
+		if (!userValid) {
+			throw new Error('El usuario ya existe');
+		}
+
+		const emailValid = await this.emailExists(newUser.email);
+
+		if (!emailValid) {
+			throw new Error('El email ya está asignado a otra cuenta');
+		}
+
 		newUser.password = await this.authService.hashPassword(newUser.password);
 
-		return await this.userRepository.create(newUser);
+		return await this.userRepository.save(newUser);
 	}
 
 	async findAll(): Promise<UserModel[]> {
@@ -27,8 +38,16 @@ export class UserService {
 		return await this.userRepository.findOne({ where: { username } });
 	}
 
+	async findEmail(email: string): Promise<UserModel> {
+		return await this.userRepository.findOne({ where: { email } });
+	}
+
 	async login(credentials: LoginUserDto): Promise<UserModel> {
-		const user = await this.usernameExists(credentials.username);
+		const user = await this.findUser(credentials.username);
+
+		if (!user) {
+			throw new Error('El usuario no existe');
+		}
 
 		const valid = await this.validatePassword(credentials.password, user.password);
 
@@ -43,13 +62,23 @@ export class UserService {
 		return await this.authService.comparePassword(password, storedHash);
 	}
 
-	async usernameExists(username: string): Promise<UserModel> {
+	async usernameExists(username: string): Promise<boolean> {
 		const user = await this.findUser(username);
 
-		if (!user) {
-			throw new Error('El usuario no existe');
+		if (user) {
+			return false;
 		}
 
-		return user;
+		return true;
+	}
+
+	async emailExists(email: string): Promise<boolean> {
+		const user = await this.findEmail(email);
+
+		if (user) {
+			return false;
+		}
+
+		return true;
 	}
 }
