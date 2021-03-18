@@ -6,6 +6,21 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 
+export interface AccessTokenPayloadUser {
+	id: number;
+	name: string;
+	username: string;
+}
+
+export interface CustomRequest extends Request {
+	user?: AccessTokenPayloadUser;
+}
+
+export interface GraphQLCustomContext {
+	req: CustomRequest;
+	res: Response;
+}
+
 @Module({
 	imports: [
 		GraphQLModule.forRoot({
@@ -13,6 +28,8 @@ import { UserModule } from './user/user.module';
 			playground: true,
 			autoSchemaFile: 'schema.gql',
 			path: '/graphql',
+			context: ({ req, res, connection }): GraphQLCustomContext =>
+				connection ? { req: connection.context, res } : { req, res },
 		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',

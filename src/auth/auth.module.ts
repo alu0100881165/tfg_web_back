@@ -10,9 +10,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 @Module({
 	imports: [
 		forwardRef(() => UserModule),
-		JwtModule.register({
-			secret: get('JWT_ACCESS_SECRET'),
-		}),
+		// JwtModule.register({
+		// 	secret: get('JWT_ACCESS_SECRET'),
+		// 	signOptions: {
+		// 		expiresIn: `${get('JWT_ACCESS_EXPIRATION_TIME')}`,
+		// 	},
+		// }),
 	],
 	providers: [AuthResolver, AuthService, JwtStrategy, JwtAuthGuard],
 	exports: [AuthService],

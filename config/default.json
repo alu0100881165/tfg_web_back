@@ -1,4 +1,7 @@
 {
     "JWT_ACCESS_SECRET": "jwtProgresiveAppAccessControl",
-    "JWT_REFRESH_SECRET": "jwtProgresiveAppRefreshControl"
+    "JWT_ACCESS_EXPIRATION_TIME": "15m",
+    "JWT_REFRESH_SECRET": "jwtProgresiveAppRefreshControl",
+    "JWT_REFRESH_COOKIE_KEY": "jgiid",
+    "JWT_REFRESH_EXPIRATION_TIME": "7d"
 }

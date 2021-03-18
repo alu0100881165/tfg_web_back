@@ -70,4 +70,11 @@ export class UserService {
 		});
 		return valid;
 	}
+
+	// async setCurrentRefreshToken(refreshToken: string, userId: number) {
+	// 	const currentHashedRefreshToken = await hash(refreshToken, 10);
+	// 	await this.userRepository.update(userId, {
+	// 		currentHashedRefreshToken,
+	// 	});
+	// }
 }

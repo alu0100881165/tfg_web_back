@@ -1,22 +1,30 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Res, UseGuards } from '@nestjs/common';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { LoginDTO } from 'src/dto/Login.dts';
 import { UserModel } from 'src/models/user.model';
 import { AuthService } from './auth.service';
 import { LoginResponse } from './responses/login.response';
 import { RegisterResponse } from './responses/register.response';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { Response } from 'express';
 
 @Resolver()
 export class AuthResolver {
 	constructor(private authService: AuthService) {}
 
 	@Mutation(() => LoginResponse)
-	login(
+	async login(
 		@Args('username') username: string,
-		@Args('password') password: string
+		@Args('password') password: string,
+		@Context('res') response: Response
 	): Promise<LoginResponse> {
-		return this.authService.login({ username, password });
+		console.log('Objeto de respuestas: ', response);
+		const loginResponse = await this.authService.login({ username, password });
+
+		const [refreshToken, payload] = this.authService.generateRefreshToken(loginResponse.user);
+
+		this.authService.sendRefreshToken(response, refreshToken);
+
+		return loginResponse;
 	}
 
 	@Mutation(() => UserModel)
