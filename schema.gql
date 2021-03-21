@@ -8,7 +8,7 @@ type UserModel {
   email: String!
   firstname: String!
   lastname: String!
-  counter: Float!
+  tokenVersion: Float!
 }
 
 type LoginResponse {
@@ -16,11 +16,17 @@ type LoginResponse {
   user: UserModel!
 }
 
+type LogoutResponse {
+  username: String!
+}
+
 type Query {
   findAll: [UserModel!]!
 }
 
 type Mutation {
-  login(password: String!, username: String!): LoginResponse!
   register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): UserModel!
+  login(password: String!, username: String!): LoginResponse!
+  logout: LogoutResponse!
+  delete(userId: String!): UserModel!
 }

@@ -29,7 +29,7 @@ export class UserModel {
 
 	@Field()
 	@Column({ type: 'integer', default: 0 })
-	counter: number;
+	tokenVersion: number;
 
 	@BeforeInsert()
 	infoToLowerCase() {

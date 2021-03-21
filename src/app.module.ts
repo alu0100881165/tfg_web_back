@@ -4,22 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-
-export interface AccessTokenPayloadUser {
-	id: number;
-	name: string;
-	username: string;
-}
-
-export interface CustomRequest extends Request {
-	user?: AccessTokenPayloadUser;
-}
-
-export interface GraphQLCustomContext {
-	req: CustomRequest;
-	res: Response;
-}
+import { GraphQLCustomContext } from './types/app.types';
 
 @Module({
 	imports: [
@@ -45,7 +30,6 @@ export interface GraphQLCustomContext {
 			migrationsRun: true,
 		}),
 		AuthModule,
-		UserModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

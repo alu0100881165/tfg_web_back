@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDTO } from '../dto/CreateUser.dto';
+import { CreateUserDTO } from '../../dto/CreateUser.dto';
 import { UserModel } from '../models/user.model';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from './auth.service';
 import { compare, hash } from 'bcrypt';
 
 @Injectable()
@@ -26,10 +26,6 @@ export class UserService {
 		return await this.userRepository.findOne({ where: { email } });
 	}
 
-	async validatePassword(password: string, storedHash: string): Promise<boolean> {
-		return await this.comparePassword(password, storedHash);
-	}
-
 	async usernameExists(username: string): Promise<boolean> {
 		const user = await this.findUser(username);
 
@@ -50,31 +46,11 @@ export class UserService {
 		return true;
 	}
 
-	async hashPassword(password: string): Promise<string> {
-		const hashedPassword: string = await new Promise((resolve, reject) => {
-			hash(password, 12, function (err, hash) {
-				if (err) reject(err);
-				resolve(hash);
-			});
-		});
+	async delete(userId: string): Promise<UserModel> {
+		const rowDeleted = await this.userRepository.findOne(userId);
 
-		return hashedPassword;
+		await this.userRepository.delete(rowDeleted.id);
+
+		return rowDeleted;
 	}
-
-	async comparePassword(password: string, storedHash: string): Promise<boolean> {
-		const valid: boolean = await new Promise((resolve, reject) => {
-			compare(password, storedHash, function (err, isValid) {
-				if (err) reject(err);
-				resolve(isValid);
-			});
-		});
-		return valid;
-	}
-
-	// async setCurrentRefreshToken(refreshToken: string, userId: number) {
-	// 	const currentHashedRefreshToken = await hash(refreshToken, 10);
-	// 	await this.userRepository.update(userId, {
-	// 		currentHashedRefreshToken,
-	// 	});
-	// }
 }

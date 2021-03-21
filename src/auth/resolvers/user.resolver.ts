@@ -1,18 +1,14 @@
 import { Inject, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
-import { CtxUser } from 'src/auth/decorators/ctx-user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UserModel } from '../models/user.model';
-import { UserService } from './user.service';
+import { UserService } from '../services/user.service';
 
 @Resolver(of => UserModel)
 export class UserResolver {
 	constructor(@Inject(UserService) private userService: UserService) {}
 
-	@UseGuards(JwtAuthGuard)
 	@Query(() => [UserModel])
-	findAll(@CtxUser() user: UserModel): Promise<UserModel[]> {
-		console.log(user);
+	findAll(): Promise<UserModel[]> {
 		return this.userService.findAll();
 	}
 
@@ -23,4 +19,8 @@ export class UserResolver {
 	// ): Promise<UserModel> {
 	// 	return this.userService.login({ username, password });
 	// }
+	@Mutation(() => UserModel)
+	delete(@Args('userId') userId: string): Promise<UserModel> {
+		return this.userService.delete(userId);
+	}
 }
