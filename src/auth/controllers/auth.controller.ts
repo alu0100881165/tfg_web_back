@@ -22,6 +22,7 @@ export class AuthController {
 		@Req() request: Request,
 		@Res() response: Response
 	): Promise<Response<RefreshTokenResponse>> {
+		console.log('Request object received: ', request.cookies);
 		const refreshToken = request.cookies[String(get('JWT_REFRESH_COOKIE_KEY'))];
 		if (!refreshToken) {
 			return response.status(400).send({
