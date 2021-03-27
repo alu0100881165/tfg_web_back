@@ -25,7 +25,7 @@ type Query {
 }
 
 type Mutation {
-  register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): UserModel!
+  register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
   login(password: String!, username: String!): LoginResponse!
   logout: LogoutResponse!
   delete(userId: String!): UserModel!

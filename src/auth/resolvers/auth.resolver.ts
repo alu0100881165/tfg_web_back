@@ -17,7 +17,7 @@ export class AuthResolver {
 
 	constructor(private authService: AuthService) {}
 
-	@Mutation(() => UserModel)
+	@Mutation(() => LoginResponse)
 	async register(
 		@Args('username') username: string,
 		@Args('email') email: string,
