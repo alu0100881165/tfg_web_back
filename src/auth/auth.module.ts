@@ -6,9 +6,11 @@ import { AuthResolver } from './resolvers/auth.resolver';
 import { AuthService } from './services/auth.service';
 import { UserResolver } from './resolvers/user.resolver';
 import { UserService } from './services/user.service';
+import { AuthController } from './controllers/auth.controller';
 
 @Module({
 	imports: [TypeOrmModule.forFeature([UserModel])],
+	controllers: [AuthController],
 	providers: [AuthResolver, AuthService, UserResolver, UserService],
 	exports: [AuthService, UserService],
 })
