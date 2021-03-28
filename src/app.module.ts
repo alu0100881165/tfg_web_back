@@ -13,6 +13,10 @@ import { GraphQLCustomContext } from './types/app.types';
 			playground: true,
 			autoSchemaFile: 'schema.gql',
 			path: '/graphql',
+			cors: {
+				credentials: true,
+				origin: 'http://localhost:8100',
+			},
 			context: ({ req, res, connection }): GraphQLCustomContext =>
 				connection ? { req: connection.context, res } : { req, res },
 		}),
