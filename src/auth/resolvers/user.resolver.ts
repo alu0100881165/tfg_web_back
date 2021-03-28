@@ -1,10 +1,15 @@
-import { Inject, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { Inject, Logger, UseGuards } from '@nestjs/common';
+import { Args, Mutation, Resolver, Query, Context } from '@nestjs/graphql';
+import { GraphQLCustomContext } from 'src/types/app.types';
+import { AuthUtils } from 'src/utils/auth.utils';
 import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
+import { AuthResolver } from './auth.resolver';
 
 @Resolver(of => UserModel)
 export class UserResolver {
+	private logger = new Logger(AuthResolver.name);
+
 	constructor(@Inject(UserService) private userService: UserService) {}
 
 	@Query(() => [UserModel])
@@ -12,15 +17,31 @@ export class UserResolver {
 		return this.userService.findAll();
 	}
 
-	// @Query(() => UserModel)
-	// login(
-	// 	@Args('username') username: string,
-	// 	@Args('password') password: string
-	// ): Promise<UserModel> {
-	// 	return this.userService.login({ username, password });
-	// }
 	@Mutation(() => UserModel)
 	delete(@Args('userId') userId: string): Promise<UserModel> {
 		return this.userService.delete(userId);
+	}
+
+	@Query(() => UserModel, { nullable: true })
+	async me(@Context() context: GraphQLCustomContext): Promise<UserModel | null> {
+		const { authorization } = context.req.headers;
+		if (!authorization) {
+			return null;
+		}
+		const [, token] = authorization.split(' ');
+
+		if (!token || !authorization.match(/bearer\s.+/i)) {
+			return null;
+		}
+
+		try {
+			const { user } = AuthUtils.verifyAccessToken(token);
+			const { id, username } = user;
+			this.logger.log(`${username} requested user info`);
+			const currentUser = await this.userService.findById(id);
+			return currentUser;
+		} catch (err) {
+			return null;
+		}
 	}
 }

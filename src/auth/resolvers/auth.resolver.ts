@@ -38,7 +38,6 @@ export class AuthResolver {
 		const [refreshToken, payload] = AuthUtils.generateRefreshToken(user);
 		AuthUtils.sendRefreshToken(response, refreshToken, payload);
 		const [accessToken] = AuthUtils.generateAccessToken(user);
-		console.log('Es el error aqui?: ', accessToken);
 
 		return { accessToken, user };
 	}
