@@ -3,12 +3,28 @@
 # ------------------------------------------------------
 
 type UserModel {
+  """Identifier"""
   id: Float!
+
+  """Username"""
   username: String!
+
+  """Email"""
   email: String!
+
+  """Roles"""
+  roles: [Role!]!
+
+  """Name"""
   firstname: String!
+
+  """Lastname"""
   lastname: String!
-  tokenVersion: Float!
+}
+
+enum Role {
+  BaseUser
+  Admin
 }
 
 type LoginResponse {

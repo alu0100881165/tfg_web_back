@@ -28,7 +28,7 @@ import { GraphQLCustomContext } from './types/app.types';
 			password: 'react',
 			database: 'tfgback',
 			entities: ['dist/**/*.model.js'],
-			synchronize: true,
+			// synchronize: true,
 			migrations: ['dist/migrations/*{.ts, .js}'],
 			migrationsTableName: 'migrations_typeorm',
 			migrationsRun: true,

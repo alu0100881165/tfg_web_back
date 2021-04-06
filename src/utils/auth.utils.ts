@@ -1,11 +1,17 @@
 import { Logger } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 import { get } from 'config';
-import { sign, decode, verify } from 'jsonwebtoken';
-import { AccessTokenPayload, AccessTokenPayloadUser } from 'src/types/auth.types';
+import { CookieOptions, Response } from 'express';
+import { decode, sign, verify } from 'jsonwebtoken';
+import {
+	AccessTokenPayload,
+	AccessTokenPayloadUser,
+	Role,
+	RolesComposition,
+} from 'src/types/auth.types';
+
 import { UserModel } from '../auth/models/user.model';
 import { RefreshTokenPayload } from '../types/auth.types';
-import { CookieOptions, Response } from 'express';
 
 export class AuthUtils {
 	// Nombre del logger, y eliminamos el timestamp
@@ -33,13 +39,14 @@ export class AuthUtils {
 	}
 
 	static generateAccessToken(user: AccessTokenPayloadUser): [string, AccessTokenPayload] {
-		const { id, firstname, username } = user;
+		const { id, firstname, username, roles } = user;
 
 		const payload: AccessTokenPayload = {
 			user: {
 				id,
 				firstname,
 				username,
+				roles,
 			},
 		};
 
@@ -108,5 +115,25 @@ export class AuthUtils {
 		};
 
 		response.cookie(get('JWT_REFRESH_COOKIE_KEY'), refreshToken, cookieOptions);
+	}
+
+	static hasRole(required: Role, user: AccessTokenPayloadUser): boolean {
+		if (user.roles.includes(required)) return true;
+
+		const rolesToCheck: Role[] = [...user.roles];
+		const checked: Partial<Record<Role, boolean>> = {};
+
+		while (rolesToCheck.length > 0) {
+			const current = rolesToCheck.shift();
+			if (!checked[current]) {
+				checked[current] = true;
+
+				if (current === required) return true;
+
+				rolesToCheck.push(...RolesComposition[current]);
+			}
+		}
+
+		return false;
 	}
 }
