@@ -36,7 +36,7 @@ export class UserModel {
 	tokenVersion: number;
 
 	@BeforeInsert()
-	infoToLowerCase() {
+	infoToLowerCase(): void {
 		this.username = this.username.toLowerCase();
 		this.email = this.email.toLowerCase();
 	}

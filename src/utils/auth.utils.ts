@@ -19,9 +19,9 @@ export class AuthUtils {
 
 	static async passwordToHash(password: string): Promise<string> {
 		const hashedPassword: string = await new Promise((resolve, reject) => {
-			hash(password, 12, function (err, hash) {
+			hash(password, 12, (err, hashed) => {
 				if (err) reject(err);
-				resolve(hash);
+				resolve(hashed);
 			});
 		});
 
@@ -30,7 +30,7 @@ export class AuthUtils {
 
 	static async comparePasswords(password: string, storedHash: string): Promise<boolean> {
 		const valid: boolean = await new Promise((resolve, reject) => {
-			compare(password, storedHash, function (err, isValid) {
+			compare(password, storedHash, (err, isValid) => {
 				if (err) reject(err);
 				resolve(isValid);
 			});
@@ -81,7 +81,7 @@ export class AuthUtils {
 		return [token, payload];
 	}
 
-	//Decode vs verify
+	// Decode vs verify
 	static decodeToken<T>(token: string): T {
 		return decode(token) as T;
 	}

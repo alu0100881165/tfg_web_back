@@ -1,10 +1,10 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
-import { Request, Response } from 'express';
 import { get } from 'config';
+import { Request, Response } from 'express';
+import { TokenExpiredError } from 'jsonwebtoken';
 import { RefreshTokenPayload } from 'src/types/auth.types';
 import { AuthUtils } from 'src/utils/auth.utils';
-import { TokenExpiredError } from 'jsonwebtoken';
+
 import { UserService } from '../services/user.service';
 
 interface RefreshTokenResponse {

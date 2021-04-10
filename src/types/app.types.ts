@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+
 import { AccessTokenPayloadUser } from './auth.types';
 
 export interface CustomRequest extends Request {

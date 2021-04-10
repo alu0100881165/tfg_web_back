@@ -1,12 +1,13 @@
-import { Inject, Logger, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver, Query, Context } from '@nestjs/graphql';
+import { Inject, Logger } from '@nestjs/common';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLCustomContext } from 'src/types/app.types';
 import { AuthUtils } from 'src/utils/auth.utils';
+
 import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { AuthResolver } from './auth.resolver';
 
-@Resolver(of => UserModel)
+@Resolver(() => UserModel)
 export class UserResolver {
 	private logger = new Logger(AuthResolver.name);
 

@@ -5,10 +5,11 @@ import {
 	Logger,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { getContextRequest } from '../../utils/context.utils';
-import { AuthUtils } from '../../utils/auth.utils';
-import { TokenExpiredError, JsonWebTokenError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AccessTokenPayload } from 'src/types/auth.types';
+
+import { AuthUtils } from '../../utils/auth.utils';
+import { getContextRequest } from '../../utils/context.utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -50,7 +51,11 @@ export class AuthGuard implements CanActivate {
 						user: { username },
 					} = AuthUtils.decodeToken<AccessTokenPayload>(token);
 					loggerMessage = `${handler}: ${username} ${err.message}`;
-				} catch (e) {}
+				} catch (e) {
+					throw new UnauthorizedException({
+						message: 'Error de validación del access token',
+					});
+				}
 			}
 
 			this.logger.error(loggerMessage);

@@ -1,33 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
 import { CreateUserDTO } from '../../dto/CreateUser.dto';
 import { UserModel } from '../models/user.model';
-import { AuthService } from './auth.service';
-import { compare, hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
 	constructor(@InjectRepository(UserModel) private userRepository: Repository<UserModel>) {}
 
 	async create(newUser: CreateUserDTO): Promise<UserModel> {
-		return await this.userRepository.save(newUser);
+		return this.userRepository.save(newUser);
 	}
 
 	async findAll(): Promise<UserModel[]> {
-		return await this.userRepository.find();
+		return this.userRepository.find();
 	}
 
 	async findById(userId: number): Promise<UserModel> {
-		return await this.userRepository.findOne(userId);
+		return this.userRepository.findOne(userId);
 	}
 
 	async findUser(username: string): Promise<UserModel> {
-		return await this.userRepository.findOne({ where: { username } });
+		return this.userRepository.findOne({ where: { username } });
 	}
 
 	async findEmail(email: string): Promise<UserModel> {
-		return await this.userRepository.findOne({ where: { email } });
+		return this.userRepository.findOne({ where: { email } });
 	}
 
 	async usernameExists(username: string): Promise<boolean> {

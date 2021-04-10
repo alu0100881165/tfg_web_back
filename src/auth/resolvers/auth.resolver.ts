@@ -1,15 +1,14 @@
 import { Logger } from '@nestjs/common';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { Response } from 'express';
-import { UserModel } from 'src/auth/models/user.model';
-import { AccessTokenPayloadUser } from 'src/types/auth.types';
+import { AccessTokenPayloadUser, Role } from 'src/types/auth.types';
 import { AuthUtils } from 'src/utils/auth.utils';
+
 import { Auth } from '../decorators/auth.decorator';
 import { User } from '../decorators/user.decorator';
-
 import { LoginResponse } from '../responses/login.response';
-import { AuthService } from '../services/auth.service';
 import { LogoutResponse } from '../responses/logout.repsonse';
+import { AuthService } from '../services/auth.service';
 
 @Resolver()
 export class AuthResolver {
@@ -58,7 +57,7 @@ export class AuthResolver {
 		return { accessToken, user };
 	}
 
-	@Auth()
+	@Auth(Role.Admin)
 	@Mutation(() => LogoutResponse)
 	async logout(
 		@User() { username }: AccessTokenPayloadUser,

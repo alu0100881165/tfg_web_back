@@ -1,22 +1,9 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { compare, hash } from 'bcrypt';
 import { UserModel } from 'src/auth/models/user.model';
-import { AccessDTO } from '../../dto/Access.dto';
-import { UserService } from './user.service';
-import { RegisterResponse } from '../responses/register.response';
-import { LoginResponse } from '../responses/login.response';
 import { CreateUserDTO } from 'src/dto/CreateUser.dto';
-import { LoginDTO } from 'src/dto/Login.dts';
-import { get } from 'config';
-import { CookieOptions, Response } from 'express';
-import { sign } from 'jsonwebtoken';
-import { RefreshTokenPayload } from 'src/types/auth.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
-interface JWTCookie {
-	cookie: string;
-	token: string;
-}
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +15,8 @@ export class AuthService {
 		return this.userService.findUser(username);
 	}
 
-	async register(newUser: CreateUserDTO): Promise<UserModel> {
+	async register(userRegist: CreateUserDTO): Promise<UserModel> {
+		const newUser: CreateUserDTO = userRegist;
 		const userValid = await this.userService.usernameExists(newUser.username);
 		if (!userValid) {
 			this.logger.error(`Error al crear el usuario ${newUser.username}: ya esta en uso`);
