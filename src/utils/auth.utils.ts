@@ -3,6 +3,7 @@ import { compare, hash } from 'bcrypt';
 import { get } from 'config';
 import { CookieOptions, Response } from 'express';
 import { decode, sign, verify } from 'jsonwebtoken';
+import { UserModel } from 'src/modules/auth/models/user.model';
 import {
 	AccessTokenPayload,
 	AccessTokenPayloadUser,
@@ -10,7 +11,6 @@ import {
 	RolesComposition,
 } from 'src/types/auth.types';
 
-import { UserModel } from '../auth/models/user.model';
 import { RefreshTokenPayload } from '../types/auth.types';
 
 export class AuthUtils {

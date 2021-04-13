@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
-import { UserModel } from 'src/auth/models/user.model';
 import { CreateUserDTO } from 'src/dto/CreateUser.dto';
 import { AuthUtils } from 'src/utils/auth.utils';
 
+import { UserModel } from '../models/user.model';
 import { UserService } from './user.service';
 
 @Injectable()

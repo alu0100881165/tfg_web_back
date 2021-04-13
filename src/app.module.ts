@@ -4,7 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { CounterModule } from './modules/counter/counter.module';
 import { GraphQLCustomContext } from './types/app.types';
 
 @Module({
@@ -29,12 +30,13 @@ import { GraphQLCustomContext } from './types/app.types';
 			password: 'react',
 			database: 'tfgback',
 			entities: ['dist/**/*.model.js'],
-			// synchronize: true,
+			synchronize: true,
 			migrations: ['dist/migrations/*{.ts, .js}'],
 			migrationsTableName: 'migrations_typeorm',
 			migrationsRun: true,
 		}),
 		AuthModule,
+		CounterModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

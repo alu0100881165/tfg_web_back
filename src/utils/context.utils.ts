@@ -11,7 +11,7 @@ export const getContextRequest = (context: ExecutionContext): CustomRequest => {
 		case 'graphql':
 			return (context.getArgs()[2] as GraphQLCustomContext).req;
 		default:
-			logger.error(`Contextto desconocido de tipo: ${contextType}`);
+			logger.error(`Contexto desconocido de tipo: ${contextType}`);
 			throw new InternalServerErrorException({
 				message: '',
 			});

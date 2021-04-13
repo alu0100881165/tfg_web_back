@@ -7,9 +7,8 @@ import {
 } from '@nestjs/common';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AccessTokenPayload } from 'src/types/auth.types';
-
-import { AuthUtils } from '../../utils/auth.utils';
-import { getContextRequest } from '../../utils/context.utils';
+import { AuthUtils } from 'src/utils/auth.utils';
+import { getContextRequest } from 'src/utils/context.utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

@@ -36,6 +36,21 @@ type LogoutResponse {
   username: String!
 }
 
+type CounterModel {
+  """Identifier"""
+  id: Float!
+
+  """Username"""
+  username: String!
+
+  """Software Version"""
+  currentVersion: String!
+}
+
+type RegisterCounterResponse {
+  counter: CounterModel!
+}
+
 type Query {
   findAll: [UserModel!]!
   me: UserModel
@@ -46,4 +61,5 @@ type Mutation {
   login(password: String!, username: String!): LoginResponse!
   logout: LogoutResponse!
   delete(userId: String!): UserModel!
+  createCounter(currentVersion: String!, password: String!, username: String!): RegisterCounterResponse!
 }
