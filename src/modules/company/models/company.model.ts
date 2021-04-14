@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { UserModel } from '../../auth/models/user.model';
 
 @ObjectType()
 @Entity()
@@ -16,9 +18,16 @@ export class CompanyModel {
 	@Column({ type: 'varchar', length: 255 })
 	address: string;
 
+	@Field({ description: 'Company postal code' })
+	@Column({ type: 'varchar', length: 255 })
+	postalCode: string;
+
 	@Field({ description: 'Contact phone' })
 	@Column({ type: 'varchar', length: 255 })
 	phone: string;
+
+	@OneToMany(() => UserModel, (user: UserModel) => user.company, { nullable: false })
+	users: UserModel[];
 
 	@BeforeInsert()
 	infoToLowerCase(): void {

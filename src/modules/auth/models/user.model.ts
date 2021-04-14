@@ -1,6 +1,15 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Role } from 'src/types/auth.types';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+	BeforeInsert,
+	Column,
+	Entity,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+} from 'typeorm';
+
+import { CompanyModel } from '../../company/models/company.model';
 
 @ObjectType()
 @Entity()
@@ -34,6 +43,14 @@ export class UserModel {
 
 	@Column({ type: 'integer', default: 0 })
 	tokenVersion: number;
+
+	@Field(() => CompanyModel, { description: 'Associated company' })
+	@ManyToOne(() => CompanyModel, (company: CompanyModel) => company.users, {
+		nullable: false,
+		eager: true,
+	})
+	@JoinColumn({ name: 'company' })
+	company: CompanyModel;
 
 	@BeforeInsert()
 	infoToLowerCase(): void {

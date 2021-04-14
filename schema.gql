@@ -2,6 +2,23 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CompanyModel {
+  """Identifier"""
+  id: Float!
+
+  """Company name"""
+  name: String!
+
+  """Company address"""
+  address: String!
+
+  """Company postal code"""
+  postalCode: String!
+
+  """Contact phone"""
+  phone: String!
+}
+
 type UserModel {
   """Identifier"""
   id: Float!
@@ -20,6 +37,9 @@ type UserModel {
 
   """Lastname"""
   lastname: String!
+
+  """Associated company"""
+  company: CompanyModel!
 }
 
 enum Role {
