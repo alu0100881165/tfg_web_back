@@ -1,8 +1,11 @@
-import { Inject, Logger } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Logger } from '@nestjs/common';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { CreateUserDTO } from 'src/dto/CreateUser.dto';
 import { GraphQLCustomContext } from 'src/types/app.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
+import { CompanyModel } from '../../company/models/company.model';
+import { CompanyService } from '../../company/services/company.service';
 import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { AuthResolver } from './auth.resolver';
@@ -11,11 +14,22 @@ import { AuthResolver } from './auth.resolver';
 export class UserResolver {
 	private logger = new Logger(AuthResolver.name);
 
-	constructor(@Inject(UserService) private userService: UserService) {}
+	constructor(private userService: UserService, private companyService: CompanyService) {}
 
 	@Query(() => [UserModel])
 	findAll(): Promise<UserModel[]> {
 		return this.userService.findAll();
+	}
+
+	@Mutation(() => UserModel)
+	update(
+		@Args('username') username: string,
+		@Args('newUsername', { nullable: true }) newUsername?: string,
+		@Args('newEmail', { nullable: true }) newEmail?: string,
+		@Args('newFirstname', { nullable: true }) newFirstname?: string,
+		@Args('newLastname', { nullable: true }) newLastname?: string
+	): Promise<CreateUserDTO> {
+		return this.userService.update(username, newUsername, newEmail, newFirstname, newLastname);
 	}
 
 	@Mutation(() => UserModel)
@@ -44,5 +58,11 @@ export class UserResolver {
 		} catch (err) {
 			return null;
 		}
+	}
+
+	@ResolveField(() => CompanyModel)
+	async company(@Parent() user: UserModel): Promise<CompanyModel> {
+		const { company } = await this.userService.findOne(user.id, { relations: ['company'] });
+		return company;
 	}
 }

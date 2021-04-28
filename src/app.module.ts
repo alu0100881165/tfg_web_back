@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { CompanyModule } from './modules/company/company.module';
 import { CounterModule } from './modules/counter/counter.module';
 import { GraphQLCustomContext } from './types/app.types';
 
@@ -37,6 +38,7 @@ import { GraphQLCustomContext } from './types/app.types';
 		}),
 		AuthModule,
 		CounterModule,
+		CompanyModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

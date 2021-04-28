@@ -1,9 +1,11 @@
 import { Inject, Logger } from '@nestjs/common';
-import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CreateCompanyDTO } from 'src/dto/CreateCompany.dto';
+import { UserModel } from 'src/modules/auth/models/user.model';
 import { GraphQLCustomContext } from 'src/types/app.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
+import { UserService } from '../../auth/services/user.service';
 import { CompanyModel } from '../models/company.model';
 import { CompanyService } from '../services/company.service';
 
@@ -11,7 +13,10 @@ import { CompanyService } from '../services/company.service';
 export class CompanyResolver {
 	private logger = new Logger(CompanyModel.name);
 
-	constructor(@Inject(CompanyService) private companyService: CompanyService) {}
+	constructor(
+		@Inject(CompanyService) private companyService: CompanyService,
+		@Inject(UserService) private userService: UserService
+	) {}
 
 	@Mutation(() => CompanyModel)
 	async createCompany(
@@ -50,7 +55,13 @@ export class CompanyResolver {
 	}
 
 	@Mutation(() => CompanyModel)
-	delete(@Args('id') id: number): Promise<CompanyModel> {
+	deleteCompany(@Args('id') id: number): Promise<CompanyModel> {
 		return this.companyService.delete(id);
 	}
+
+	// @ResolveField(() => UserModel)
+	// async users(@Parent() user: UserModel): Promise<UserModel> {
+	// 	const { id } = user;
+	// 	return this.userService.findById(id);
+	// }
 }

@@ -1,3 +1,4 @@
+import { CompanyModel } from 'src/modules/company/models/company.model';
 import { Role } from 'src/types/auth.types';
 
 export interface CreateUserDTO {
@@ -6,5 +7,6 @@ export interface CreateUserDTO {
 	password: string;
 	firstname: string;
 	lastname: string;
-	roles?: [Role];
+	company: CompanyModel;
+	roles?: Role[];
 }

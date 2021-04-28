@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDTO } from 'src/dto/CreateUser.dto';
+import { Role } from 'src/types/auth.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
 import { UserModel } from '../models/user.model';
@@ -17,6 +18,30 @@ export class AuthService {
 
 	async register(userRegist: CreateUserDTO): Promise<UserModel> {
 		const newUser: CreateUserDTO = userRegist;
+		const userValid = await this.userService.usernameExists(newUser.username);
+		if (!userValid) {
+			this.logger.error(`Error al crear el usuario ${newUser.username}: ya esta en uso`);
+			throw new BadRequestException({ message: 'Usuario en uso' });
+		}
+
+		const emailValid = await this.userService.emailExists(newUser.email);
+
+		if (!emailValid) {
+			throw new Error('El email ya está asignado a otra cuenta');
+		}
+
+		newUser.password = await AuthUtils.passwordToHash(newUser.password);
+
+		const user = await this.userService.create(newUser);
+
+		console.log(user.company);
+
+		return user;
+	}
+
+	async registerAdmin(userRegist: CreateUserDTO): Promise<UserModel> {
+		const newUser: CreateUserDTO = userRegist;
+		newUser.roles = [Role.BaseUser, Role.Admin];
 		const userValid = await this.userService.usernameExists(newUser.username);
 		if (!userValid) {
 			this.logger.error(`Error al crear el usuario ${newUser.username}: ya esta en uso`);

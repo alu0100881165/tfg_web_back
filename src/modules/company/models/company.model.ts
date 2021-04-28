@@ -26,7 +26,8 @@ export class CompanyModel {
 	@Column({ type: 'varchar', length: 255 })
 	phone: string;
 
-	@OneToMany(() => UserModel, (user: UserModel) => user.company, { nullable: false })
+	// @Field(() => [UserModel], { description: 'Related users' })
+	@OneToMany(() => UserModel, user => user.company, { nullable: true })
 	users: UserModel[];
 
 	@BeforeInsert()

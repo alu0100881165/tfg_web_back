@@ -44,10 +44,13 @@ export class UserModel {
 	@Column({ type: 'integer', default: 0 })
 	tokenVersion: number;
 
+	// @Field()
+	// @Column({ type: 'integer', nullable: false })
+	// companyId: number;
+
 	@Field(() => CompanyModel, { description: 'Associated company' })
-	@ManyToOne(() => CompanyModel, (company: CompanyModel) => company.users, {
+	@ManyToOne(() => CompanyModel, company => company.users, {
 		nullable: false,
-		eager: true,
 	})
 	@JoinColumn({ name: 'company' })
 	company: CompanyModel;

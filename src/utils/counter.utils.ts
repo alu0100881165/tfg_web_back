@@ -45,7 +45,7 @@ export class CounterUtils {
 			expiresIn: get('JWT_ACCESS_EXPIRATION_TIME'),
 		});
 
-		this.logger.log(`Access token granted to counter ${username}`);
+		this.logger.log(`Se ha concedido un token de acceso al contador ${username}`);
 
 		return [token, payload];
 	}

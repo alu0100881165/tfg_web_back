@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from 'src/dto/CreateUser.dto';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 import { UserModel } from '../models/user.model';
 
 @Injectable()
 export class UserService {
+	private logger = new Logger(UserService.name, false);
+
 	constructor(@InjectRepository(UserModel) private userRepository: Repository<UserModel>) {}
 
 	async create(newUser: CreateUserDTO): Promise<UserModel> {
@@ -19,6 +21,12 @@ export class UserService {
 
 	async findById(userId: number): Promise<UserModel> {
 		return this.userRepository.findOne(userId);
+	}
+
+	async findOne(userId: number, options: FindOneOptions<UserModel>): Promise<UserModel> {
+		const user = await this.userRepository.findOne(userId, options);
+
+		return user;
 	}
 
 	async findUser(username: string): Promise<UserModel> {
@@ -47,6 +55,42 @@ export class UserService {
 		}
 
 		return true;
+	}
+
+	async update(
+		username: string,
+		newUsername?: string,
+		newEmail?: string,
+		newFirstname?: string,
+		newLastname?: string
+	): Promise<CreateUserDTO> {
+		const userUpdate = await this.findUser(username);
+		const userUpdateDto: CreateUserDTO = userUpdate;
+
+		if (!userUpdate) {
+			this.logger.error(`Error al actualizar el usuario ${username}: no existe`);
+			throw new BadRequestException({ message: '[Update] Usuario no existe' });
+		}
+
+		if (newUsername) {
+			userUpdateDto.username = newUsername;
+		}
+
+		if (newEmail) {
+			userUpdateDto.email = newEmail;
+		}
+
+		if (newFirstname) {
+			userUpdateDto.firstname = newFirstname;
+		}
+
+		if (newLastname) {
+			userUpdateDto.lastname = newLastname;
+		}
+
+		await this.userRepository.update(userUpdate.id, userUpdateDto);
+
+		return userUpdateDto;
 	}
 
 	async delete(userId: string): Promise<UserModel> {

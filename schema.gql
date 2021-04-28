@@ -2,23 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type CompanyModel {
-  """Identifier"""
-  id: Float!
-
-  """Company name"""
-  name: String!
-
-  """Company address"""
-  address: String!
-
-  """Company postal code"""
-  postalCode: String!
-
-  """Contact phone"""
-  phone: String!
-}
-
 type UserModel {
   """Identifier"""
   id: Float!
@@ -47,6 +30,23 @@ enum Role {
   Admin
 }
 
+type CompanyModel {
+  """Identifier"""
+  id: Float!
+
+  """Company name"""
+  name: String!
+
+  """Company address"""
+  address: String!
+
+  """Company postal code"""
+  postalCode: String!
+
+  """Contact phone"""
+  phone: String!
+}
+
 type LoginResponse {
   accessToken: String!
   user: UserModel!
@@ -65,6 +65,9 @@ type CounterModel {
 
   """Software Version"""
   currentVersion: String!
+
+  """Associated company"""
+  company: CompanyModel!
 }
 
 type RegisterCounterResponse {
@@ -74,12 +77,21 @@ type RegisterCounterResponse {
 type Query {
   findAll: [UserModel!]!
   me: UserModel
+  findAllCompanies: [CompanyModel!]!
+  findCompany(id: Float!): CompanyModel!
+  findCompanyByName(name: String!): CompanyModel!
+  findAllCounters: [CounterModel!]!
 }
 
 type Mutation {
-  register(lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
+  register(companyId: Float!, lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
+  registerAdmin(companyId: Float!, lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
   login(password: String!, username: String!): LoginResponse!
   logout: LogoutResponse!
+  update(newLastname: String, newFirstname: String, newEmail: String, newUsername: String, username: String!): UserModel!
   delete(userId: String!): UserModel!
-  createCounter(currentVersion: String!, password: String!, username: String!): RegisterCounterResponse!
+  createCompany(phone: String!, postalCode: String!, address: String!, name: String!): CompanyModel!
+  updateCompany(newPhone: String, newPostalCode: String, newAddress: String, newName: String, name: String!): CompanyModel!
+  deleteCompany(id: Float!): CompanyModel!
+  createCounter(companyId: Float!, currentVersion: String!, password: String!, username: String!): RegisterCounterResponse!
 }

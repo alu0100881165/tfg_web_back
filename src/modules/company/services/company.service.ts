@@ -13,10 +13,12 @@ export class CompanyService {
 		@InjectRepository(CompanyModel) private companyRepository: Repository<CompanyModel>
 	) {}
 
+	// TODO comprobar que no exista ya
 	async create(newCompany: CreateCompanyDTO): Promise<CompanyModel> {
 		return this.companyRepository.save(newCompany);
 	}
 
+	// TODO al buscar controlar mensajes de error
 	async findAll(): Promise<CompanyModel[]> {
 		return this.companyRepository.find();
 	}
@@ -67,6 +69,11 @@ export class CompanyService {
 
 	async delete(id: number): Promise<CompanyModel> {
 		const rowDeleted = await this.companyRepository.findOne(id);
+
+		if (!rowDeleted) {
+			this.logger.error(`Error al eliminar la compañía ${rowDeleted.name}: no existe`);
+			throw new BadRequestException({ message: '[Delete] Compañía no existe' });
+		}
 
 		this.companyRepository.delete(id);
 

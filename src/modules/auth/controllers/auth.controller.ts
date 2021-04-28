@@ -2,7 +2,7 @@ import { Controller, Post, Req, Res } from '@nestjs/common';
 import { get } from 'config';
 import { Request, Response } from 'express';
 import { TokenExpiredError } from 'jsonwebtoken';
-import { RefreshTokenPayload } from 'src/types/auth.types';
+import { RefreshTokenPayload, Role } from 'src/types/auth.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
 import { UserService } from '../services/user.service';
@@ -11,6 +11,7 @@ interface RefreshTokenResponse {
 	ok: boolean;
 	message?: string;
 	accessToken?: string;
+	roles?: Role[];
 }
 
 @Controller('auth')
@@ -62,6 +63,6 @@ export class AuthController {
 		);
 		AuthUtils.sendRefreshToken(response, newRefreshToken, newPayload);
 
-		return response.send({ ok: true, accessToken });
+		return response.send({ ok: true, accessToken, roles: user.roles });
 	}
 }
