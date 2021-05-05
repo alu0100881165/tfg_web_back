@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,6 +9,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CompanyModule } from './modules/company/company.module';
 import { CounterModule } from './modules/counter/counter.module';
 import { GraphQLCustomContext } from './types/app.types';
+
+dotenv.config();
 
 @Module({
 	imports: [
@@ -25,11 +28,13 @@ import { GraphQLCustomContext } from './types/app.types';
 		}),
 		TypeOrmModule.forRoot({
 			type: 'postgres',
-			host: 'localhost',
-			port: 5432,
-			username: 'postgres',
-			password: 'react',
-			database: 'tfgback',
+			// username: 'postgres',
+			// password: 'react',
+			host: process.env.DB_HOST,
+			port: parseInt(process.env.DB_PORT, 10),
+			database: process.env.DB_DATABASE,
+			username: process.env.DB_USER,
+			password: process.env.DB_PASSWORD,
 			entities: ['dist/**/*.model.js'],
 			synchronize: true,
 			migrations: ['dist/migrations/*{.ts, .js}'],
