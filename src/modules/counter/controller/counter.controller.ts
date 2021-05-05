@@ -1,10 +1,6 @@
 import { Controller, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
-import { get } from 'config';
 import { Request, Response } from 'express';
-import { TokenExpiredError } from 'jsonwebtoken';
-import { RefreshTokenPayload } from 'src/types/auth.types';
 import { AccessTokenPayloadCounter } from 'src/types/counter.types';
-import { AuthUtils } from 'src/utils/auth.utils';
 
 import { CounterUtils } from '../../../utils/counter.utils';
 import { Counter } from '../decorators/counter.decorator';
@@ -51,7 +47,7 @@ export class CounterController {
 		@Req() request: Request,
 		@Counter() { username }: AccessTokenPayloadCounter
 	): Promise<void> {
-		const location = get('COUNTER_HEADER_KEY_LOCATION');
+		const location = process.env.COUNTER_HEADER_KEY_LOCATION;
 		const counterKey = request.headers[`${location}`];
 
 		if (!counterKey) {
@@ -63,6 +59,7 @@ export class CounterController {
 			return;
 		}
 
-		console.log('Existes y tienes un token to nais');
+		// TODO Almacenar datos en la bdd
+		console.log('Existes y tienes un token');
 	}
 }

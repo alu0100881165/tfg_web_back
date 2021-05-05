@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from 'src/dto/CreateUser.dto';
-import { FindOneOptions, Repository } from 'typeorm';
+import { FindOneOptions, getRepository, Repository } from 'typeorm';
 
 import { UserModel } from '../models/user.model';
 
@@ -16,7 +16,17 @@ export class UserService {
 	}
 
 	async findAll(): Promise<UserModel[]> {
-		return this.userRepository.find();
+		return this.userRepository.find({ relations: ['company'] });
+		// const users = await getRepository(UserModel)
+		// 	.createQueryBuilder('user')
+		// 	.groupBy('user.id')
+		// 	.getMany();
+
+		// return users;
+	}
+
+	async findCompanyUsers(companyId: number): Promise<UserModel[]> {
+		return this.userRepository.find({ where: { company: { id: companyId } } });
 	}
 
 	async findById(userId: number): Promise<UserModel> {
@@ -33,12 +43,18 @@ export class UserService {
 		return this.userRepository.findOne({ where: { username } });
 	}
 
+	async findCompanyUser(username: string, companyId: number): Promise<UserModel> {
+		return this.userRepository.findOne({
+			where: [{ username, company: { id: companyId } }],
+		});
+	}
+
 	async findEmail(email: string): Promise<UserModel> {
 		return this.userRepository.findOne({ where: { email } });
 	}
 
-	async usernameExists(username: string): Promise<boolean> {
-		const user = await this.findUser(username);
+	async usernameExists(username: string, companyId: number): Promise<boolean> {
+		const user = await this.findCompanyUser(username, companyId);
 
 		if (user) {
 			return false;

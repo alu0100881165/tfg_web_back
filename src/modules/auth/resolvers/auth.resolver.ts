@@ -87,8 +87,6 @@ export class AuthResolver {
 		const [refreshToken, payload] = AuthUtils.generateRefreshToken(user);
 		AuthUtils.sendRefreshToken(response, refreshToken, payload);
 
-		console.log(user.company);
-
 		return { accessToken, user };
 	}
 

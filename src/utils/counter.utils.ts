@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
-import { get } from 'config';
 import { decode, sign, verify } from 'jsonwebtoken';
 import { AccessTokenPayloadCounter, CountAccessTokenPayload } from 'src/types/counter.types';
 
@@ -41,8 +40,8 @@ export class CounterUtils {
 			},
 		};
 
-		const token = sign(payload, get('JWT_ACCESS_SECRET'), {
-			expiresIn: get('JWT_ACCESS_EXPIRATION_TIME'),
+		const token = sign(payload, process.env.JWT_ACCESS_SECRET, {
+			expiresIn: process.env.JWT_ACCESS_EXPIRATION_TIME,
 		});
 
 		this.logger.log(`Se ha concedido un token de acceso al contador ${username}`);
@@ -55,7 +54,7 @@ export class CounterUtils {
 	}
 
 	static verifyAccessToken(token: string): CountAccessTokenPayload {
-		const payload = verify(token, get('JWT_ACCESS_SECRET')) as CountAccessTokenPayload;
+		const payload = verify(token, process.env.JWT_ACCESS_SECRET) as CountAccessTokenPayload;
 		return payload;
 	}
 }

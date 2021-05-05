@@ -18,7 +18,7 @@ export class AuthService {
 
 	async register(userRegist: CreateUserDTO): Promise<UserModel> {
 		const newUser: CreateUserDTO = userRegist;
-		const userValid = await this.userService.usernameExists(newUser.username);
+		const userValid = await this.userService.usernameExists(newUser.username, newUser.company.id);
 		if (!userValid) {
 			this.logger.error(`Error al crear el usuario ${newUser.username}: ya esta en uso`);
 			throw new BadRequestException({ message: 'Usuario en uso' });
@@ -34,15 +34,13 @@ export class AuthService {
 
 		const user = await this.userService.create(newUser);
 
-		console.log(user.company);
-
 		return user;
 	}
 
 	async registerAdmin(userRegist: CreateUserDTO): Promise<UserModel> {
 		const newUser: CreateUserDTO = userRegist;
 		newUser.roles = [Role.BaseUser, Role.Admin];
-		const userValid = await this.userService.usernameExists(newUser.username);
+		const userValid = await this.userService.usernameExists(newUser.username, newUser.company.id);
 		if (!userValid) {
 			this.logger.error(`Error al crear el usuario ${newUser.username}: ya esta en uso`);
 			throw new BadRequestException({ message: 'Usuario en uso' });

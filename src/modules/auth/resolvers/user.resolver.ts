@@ -10,6 +10,8 @@ import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { AuthResolver } from './auth.resolver';
 
+// TODO proteger todas las rutas
+
 @Resolver(() => UserModel)
 export class UserResolver {
 	private logger = new Logger(AuthResolver.name);
@@ -19,6 +21,11 @@ export class UserResolver {
 	@Query(() => [UserModel])
 	findAll(): Promise<UserModel[]> {
 		return this.userService.findAll();
+	}
+
+	@Query(() => [UserModel])
+	findCompanyUsers(@Args('companyId') companyId: number): Promise<UserModel[]> {
+		return this.userService.findCompanyUsers(companyId);
 	}
 
 	@Mutation(() => UserModel)

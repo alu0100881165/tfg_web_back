@@ -19,7 +19,7 @@ export class UserModel {
 	id: number;
 
 	@Field({ description: 'Username' })
-	@Column({ type: 'varchar', length: 255, unique: true })
+	@Column({ type: 'varchar', length: 255 })
 	username: string;
 
 	@Field({ description: 'Email' })

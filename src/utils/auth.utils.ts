@@ -1,6 +1,5 @@
 import { Logger } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
-import { get } from 'config';
 import { CookieOptions, Response } from 'express';
 import { decode, sign, verify } from 'jsonwebtoken';
 import { UserModel } from 'src/modules/auth/models/user.model';
@@ -50,8 +49,8 @@ export class AuthUtils {
 			},
 		};
 
-		const token = sign(payload, get('JWT_ACCESS_SECRET'), {
-			expiresIn: get('JWT_ACCESS_EXPIRATION_TIME'),
+		const token = sign(payload, process.env.JWT_ACCESS_SECRET, {
+			expiresIn: process.env.JWT_ACCESS_EXPIRATION_TIME,
 		});
 
 		this.logger.log(`Se ha concedido un token de acceso al usuario ${username}`);
@@ -69,11 +68,11 @@ export class AuthUtils {
 			tokenVersion,
 			expirationDate:
 				previousExpirationDate ??
-				Date.now() + Number(get('JWT_REFRESH_EXPIRATION_TIME')) * 24 * 60 * 60 * 1000,
+				Date.now() + Number(process.env.JWT_REFRESH_EXPIRATION_TIME) * 24 * 60 * 60 * 1000,
 		};
 
-		const token = sign(payload, get('JWT_REFRESH_SECRET'), {
-			expiresIn: `${get('JWT_REFRESH_EXPIRATION_TIME')}d`,
+		const token = sign(payload, process.env.JWT_REFRESH_SECRET, {
+			expiresIn: `${process.env.JWT_REFRESH_EXPIRATION_TIME}d`,
 		});
 
 		this.logger.log(`Se ha concedido un token de refresco al usuario ${username}`);
@@ -87,17 +86,17 @@ export class AuthUtils {
 	}
 
 	static verifyAccessToken(token: string): AccessTokenPayload {
-		const payload = verify(token, get('JWT_ACCESS_SECRET')) as AccessTokenPayload;
+		const payload = verify(token, process.env.JWT_ACCESS_SECRET) as AccessTokenPayload;
 		return payload;
 	}
 
 	static verifyRefreshToken(token: string): RefreshTokenPayload {
-		const payload = verify(token, get('JWT_REFRESH_SECRET')) as RefreshTokenPayload;
+		const payload = verify(token, process.env.JWT_REFRESH_SECRET) as RefreshTokenPayload;
 		return payload;
 	}
 
 	static clearRefreshToken(response: Response): void {
-		response.cookie(get('JWT_REFRESH_COOKIE_KEY'), '', {
+		response.cookie(process.env.JWT_REFRESH_COOKIE_KEY, '', {
 			httpOnly: true,
 			maxAge: 0,
 		});
@@ -114,7 +113,7 @@ export class AuthUtils {
 			maxAge: expirationDate - Date.now(),
 		};
 
-		response.cookie(get('JWT_REFRESH_COOKIE_KEY'), refreshToken, cookieOptions);
+		response.cookie(process.env.JWT_REFRESH_COOKIE_KEY, refreshToken, cookieOptions);
 	}
 
 	static hasRole(required: Role, user: AccessTokenPayloadUser): boolean {

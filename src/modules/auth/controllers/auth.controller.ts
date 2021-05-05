@@ -1,5 +1,4 @@
 import { Controller, Post, Req, Res } from '@nestjs/common';
-import { get } from 'config';
 import { Request, Response } from 'express';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { RefreshTokenPayload, Role } from 'src/types/auth.types';
@@ -23,7 +22,7 @@ export class AuthController {
 		@Req() request: Request,
 		@Res() response: Response
 	): Promise<Response<RefreshTokenResponse>> {
-		const refreshToken = request.cookies[String(get('JWT_REFRESH_COOKIE_KEY'))];
+		const refreshToken = request.cookies[String(process.env.JWT_REFRESH_COOKIE_KEY)];
 		if (!refreshToken) {
 			return response.status(400).send({
 				ok: false,

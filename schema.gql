@@ -76,6 +76,7 @@ type RegisterCounterResponse {
 
 type Query {
   findAll: [UserModel!]!
+  findCompanyUsers(companyId: Float!): [UserModel!]!
   me: UserModel
   findAllCompanies: [CompanyModel!]!
   findCompany(id: Float!): CompanyModel!
