@@ -12,6 +12,8 @@ import { GraphQLCustomContext } from './types/app.types';
 
 dotenv.config();
 
+console.log(process.env.DATABASE_URL);
+
 @Module({
 	imports: [
 		GraphQLModule.forRoot({
@@ -41,6 +43,9 @@ dotenv.config();
 			migrations: ['dist/migrations/*{.ts, .js}'],
 			migrationsTableName: 'migrations_typeorm',
 			migrationsRun: true,
+			ssl: {
+				rejectUnauthorized: false,
+			},
 		}),
 		AuthModule,
 		CounterModule,
