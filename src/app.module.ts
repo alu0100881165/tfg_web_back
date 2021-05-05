@@ -23,7 +23,8 @@ console.log(process.env.DATABASE_URL);
 			path: '/graphql',
 			cors: {
 				credentials: true,
-				origin: 'http://localhost:8100',
+				// origin: 'http://localhost:8100',
+				origin: '*',
 			},
 			context: ({ req, res, connection }): GraphQLCustomContext =>
 				connection ? { req: connection.context, res } : { req, res },
