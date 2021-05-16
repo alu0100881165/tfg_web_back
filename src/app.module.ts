@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { CompanyModule } from './modules/company/company.module';
 import { CounterModule } from './modules/counter/counter.module';
+import { StatisticsModule } from './modules/statistics/statistics.module';
 import { GraphQLCustomContext } from './types/app.types';
 
 dotenv.config();
@@ -48,6 +49,7 @@ dotenv.config();
 		AuthModule,
 		CounterModule,
 		CompanyModule,
+		StatisticsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

@@ -1,11 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { CompanyModel } from 'src/modules/company/models/company.model';
+import { StatisticsModel } from 'src/modules/statistics/models/statistics.model';
 import {
 	BeforeInsert,
 	Column,
 	Entity,
 	JoinColumn,
 	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -27,12 +29,19 @@ export class CounterModel {
 	@Column({ type: 'varchar', length: 255 })
 	currentVersion: string;
 
+	@Field({ description: 'Maximun capacity' })
+	@Column({ type: 'int' })
+	capacity: number;
+
 	@Field(() => CompanyModel, { description: 'Associated company' })
-	@ManyToOne(() => CompanyModel, company => company.users, {
+	@ManyToOne(() => CompanyModel, company => company.counters, {
 		nullable: false,
 	})
 	@JoinColumn({ name: 'company' })
 	company: CompanyModel;
+
+	@OneToMany(() => StatisticsModel, statistics => statistics.counter, { nullable: true })
+	statistics: CounterModel[];
 
 	@BeforeInsert()
 	infoToLowerCase(): void {

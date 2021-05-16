@@ -10,7 +10,7 @@ async function bootstrap() {
 		credentials: true,
 		// origin: 'http://localhost:8100',
 		// origin: '*',
-		origin: 'http://localhost:8100',
+		origin: ['http://localhost:8100', 'http://localhost:8101'],
 	});
 	// await app.listen(process.env.PORT || 3000, '0.0.0.0');
 	await app.listen(process.env.PORT || 3000);

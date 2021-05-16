@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserModel } from '../../auth/models/user.model';
+import { CounterModel } from '../../counter/models/counter.model';
 
 @ObjectType()
 @Entity()
@@ -26,9 +27,11 @@ export class CompanyModel {
 	@Column({ type: 'varchar', length: 255 })
 	phone: string;
 
-	// @Field(() => [UserModel], { description: 'Related users' })
 	@OneToMany(() => UserModel, user => user.company, { nullable: true })
 	users: UserModel[];
+
+	@OneToMany(() => CounterModel, counter => counter.company, { nullable: true })
+	counters: CounterModel[];
 
 	@BeforeInsert()
 	infoToLowerCase(): void {

@@ -18,6 +18,7 @@ export class CounterResolver {
 		@Args('username') username: string,
 		@Args('password') password: string,
 		@Args('currentVersion') currentVersion: string,
+		@Args('capacity') capacity: number,
 		@Args('companyId') companyId: number
 	): Promise<RegisterCounterResponse> {
 		const company = await this.companyService.findOne(companyId);
@@ -25,6 +26,7 @@ export class CounterResolver {
 			username,
 			password,
 			currentVersion,
+			capacity,
 			company,
 		});
 		this.logger.log(`El contador ${counter.username} se ha registrado`);

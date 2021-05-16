@@ -1,5 +1,6 @@
 import { Controller, Logger, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { StatisticsService } from 'src/modules/statistics/services/statistics.service';
 import { AccessTokenPayloadCounter } from 'src/types/counter.types';
 
 import { CounterUtils } from '../../../utils/counter.utils';
@@ -22,7 +23,10 @@ interface BodyCredentials {
 export class CounterController {
 	private logger = new Logger(CounterController.name);
 
-	constructor(private counterService: CounterService) {}
+	constructor(
+		private counterService: CounterService,
+		private statisticsService: StatisticsService
+	) {}
 
 	// TODO Duracion access token tiempo de apertura de una empresa
 	@Post('login')
@@ -69,9 +73,13 @@ export class CounterController {
 			// });
 		}
 
-		console.log('Las estadísticas recibidas son: ', request.body);
+		const actualDate = new Date();
 
-		// TODO Almacenar datos en la bdd
-		console.log('Existes y tienes un token');
+		this.statisticsService.create({
+			datetime: actualDate,
+			entering: request.body.entering,
+			exiting: request.body.exiting,
+			counter,
+		});
 	}
 }
