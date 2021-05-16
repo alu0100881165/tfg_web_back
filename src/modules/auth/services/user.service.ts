@@ -79,9 +79,11 @@ export class UserService {
 		newEmail?: string,
 		newFirstname?: string,
 		newLastname?: string
-	): Promise<CreateUserDTO> {
+	): Promise<UserModel> {
 		const userUpdate = await this.findUser(username);
 		const userUpdateDto: CreateUserDTO = userUpdate;
+
+		console.log('ESta llegando: ', username, newUsername, newEmail, newFirstname, newLastname);
 
 		if (!userUpdate) {
 			this.logger.error(`Error al actualizar el usuario ${username}: no existe`);
@@ -93,6 +95,11 @@ export class UserService {
 		}
 
 		if (newEmail) {
+			const emailValid = await this.emailExists(newEmail);
+
+			if (!emailValid) {
+				throw new Error('El email ya está asignado a otra cuenta');
+			}
 			userUpdateDto.email = newEmail;
 		}
 
@@ -104,12 +111,12 @@ export class UserService {
 			userUpdateDto.lastname = newLastname;
 		}
 
-		await this.userRepository.update(userUpdate.id, userUpdateDto);
+		const updatedUser = await this.userRepository.save({ ...userUpdate, ...userUpdateDto });
 
-		return userUpdateDto;
+		return updatedUser;
 	}
 
-	async delete(userId: string): Promise<UserModel> {
+	async delete(userId: number): Promise<UserModel> {
 		const rowDeleted = await this.userRepository.findOne(userId);
 
 		await this.userRepository.delete(rowDeleted.id);

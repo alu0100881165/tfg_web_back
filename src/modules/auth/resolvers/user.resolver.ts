@@ -35,12 +35,12 @@ export class UserResolver {
 		@Args('newEmail', { nullable: true }) newEmail?: string,
 		@Args('newFirstname', { nullable: true }) newFirstname?: string,
 		@Args('newLastname', { nullable: true }) newLastname?: string
-	): Promise<CreateUserDTO> {
+	): Promise<UserModel> {
 		return this.userService.update(username, newUsername, newEmail, newFirstname, newLastname);
 	}
 
 	@Mutation(() => UserModel)
-	delete(@Args('userId') userId: string): Promise<UserModel> {
+	delete(@Args('userId') userId: number): Promise<UserModel> {
 		return this.userService.delete(userId);
 	}
 

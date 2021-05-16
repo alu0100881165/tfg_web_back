@@ -32,6 +32,8 @@ export class CounterController {
 	): Promise<Response<AccessTokenResponse>> {
 		const { username, password }: BodyCredentials = request.body;
 
+		console.log('Me esta llegando: ', username, password);
+
 		const counter = await this.counterService.login(username, password);
 
 		this.logger.log(`El contador ${username} ha iniciado sesion`);
@@ -52,12 +54,22 @@ export class CounterController {
 
 		if (!counterKey) {
 			return;
+			// return response.status(400).send({
+			// 	ok: false,
+			// 	message: 'No se ha encontrado la ApiKey del contador',
+			// });
 		}
 
 		const counter = await this.counterService.findUsername(username);
 		if (!counter) {
 			return;
+			// return response.status(400).send({
+			// 	ok: false,
+			// 	message: 'No se ha encontrado ningún contador con la ApiKey suministrada',
+			// });
 		}
+
+		console.log('Las estadísticas recibidas son: ', request.body);
 
 		// TODO Almacenar datos en la bdd
 		console.log('Existes y tienes un token');

@@ -85,12 +85,12 @@ type Query {
 }
 
 type Mutation {
-  register(companyId: Float!, lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
+  register(companyName: String!, lastname: String!, firstname: String!, password: String!, email: String!, username: String!): UserModel!
   registerAdmin(companyId: Float!, lastname: String!, firstname: String!, password: String!, email: String!, username: String!): LoginResponse!
   login(password: String!, username: String!): LoginResponse!
   logout: LogoutResponse!
   update(newLastname: String, newFirstname: String, newEmail: String, newUsername: String, username: String!): UserModel!
-  delete(userId: String!): UserModel!
+  delete(userId: Float!): UserModel!
   createCompany(phone: String!, postalCode: String!, address: String!, name: String!): CompanyModel!
   updateCompany(newPhone: String, newPostalCode: String, newAddress: String, newName: String, name: String!): CompanyModel!
   deleteCompany(id: Float!): CompanyModel!
