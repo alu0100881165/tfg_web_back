@@ -4,6 +4,7 @@ import { CompanyModel } from 'src/modules/company/models/company.model';
 import { CompanyService } from 'src/modules/company/services/company.service';
 
 import { CounterModel } from '../models/counter.model';
+import { CompanyCounters } from '../responses/companyCounters.response';
 import { RegisterCounterResponse } from '../responses/register.response';
 import { CounterService } from '../services/counter.service';
 
@@ -39,9 +40,16 @@ export class CounterResolver {
 		return this.counterService.findAll();
 	}
 
+	@Query(() => [CounterModel])
+	async findAllCompanyCounters(@Args('companyId') companyId: number): Promise<CounterModel[]> {
+		return this.counterService.findByCompanyId(companyId);
+	}
+
 	@ResolveField(() => CompanyModel)
-	async company(@Parent() company: CompanyModel): Promise<CompanyModel> {
-		const { id } = company;
-		return this.companyService.findOne(id);
+	async company(@Parent() counter: CounterModel): Promise<CompanyModel> {
+		const { company } = await this.counterService.findOne(counter.id, {
+			relations: ['company'],
+		});
+		return company;
 	}
 }

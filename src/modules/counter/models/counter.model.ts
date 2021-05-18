@@ -22,6 +22,8 @@ export class CounterModel {
 	@Column({ type: 'varchar', length: 255, unique: true })
 	username: string;
 
+	// TODO añadir un nombre, distinto del username para evitar problemas al editarlo en el front
+
 	@Column({ type: 'varchar', length: 255 })
 	password: string;
 
@@ -33,7 +35,7 @@ export class CounterModel {
 	@Column({ type: 'int' })
 	capacity: number;
 
-	@Field(() => CompanyModel, { description: 'Associated company' })
+	@Field(() => CompanyModel, { description: 'Associated company', nullable: true })
 	@ManyToOne(() => CompanyModel, company => company.counters, {
 		nullable: false,
 	})

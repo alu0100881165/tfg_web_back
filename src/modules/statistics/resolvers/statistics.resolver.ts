@@ -1,9 +1,11 @@
 import { Logger } from '@nestjs/common';
-import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CounterModel } from 'src/modules/counter/models/counter.model';
 
 import { CounterService } from '../../counter/services/counter.service';
 import { StatisticsModel } from '../models/statistics.model';
+import { CountersLastStatistics } from '../responses/countersLastStatistics.response';
+import { CountersStatistics } from '../responses/countersStatistics.response';
 import { StatisticsService } from '../services/statistics.service';
 
 @Resolver(() => StatisticsModel)
@@ -16,9 +18,8 @@ export class StatisticsResolver {
 	) {}
 
 	@Query(() => StatisticsModel)
-	findLatest(): Promise<StatisticsModel> {
-		const dateNow = new Date();
-		return this.statisticsService.findLatest();
+	findLatest(@Args('counterId') counterId: number): Promise<StatisticsModel> {
+		return this.statisticsService.findLatest(counterId);
 	}
 
 	@Query(() => [StatisticsModel])
@@ -26,9 +27,26 @@ export class StatisticsResolver {
 		return this.statisticsService.findAll();
 	}
 
+	@Query(() => [CountersLastStatistics])
+	async findStatisticsFromCounters(
+		@Args({ name: 'countersIds', type: () => [Number] }) countersIds: number[]
+	): Promise<CountersLastStatistics[]> {
+		const countersStatistics = await this.statisticsService.findFromCounters(countersIds);
+		return countersStatistics;
+	}
+
+	@Query(() => [[StatisticsModel]])
+	async findGraphicsStatistics(
+		@Args({ name: 'countersIds', type: () => [Number] }) countersIds: number[]
+	): Promise<StatisticsModel[][]> {
+		return this.statisticsService.findGraphicsStatistics(countersIds);
+	}
+
 	@ResolveField(() => CounterModel)
-	async company(@Parent() counter: CounterModel): Promise<CounterModel> {
-		const { id } = counter;
-		return this.counterService.findById(id);
+	async counter(@Parent() statistic: StatisticsModel): Promise<CounterModel> {
+		const { counter } = await this.statisticsService.findOne(statistic.id, {
+			relations: ['counter'],
+		});
+		return counter;
 	}
 }

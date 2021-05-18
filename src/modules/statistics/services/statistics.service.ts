@@ -1,10 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateStatisticsDTO } from 'src/dto/CreateStatistics.dto';
-import { createQueryBuilder, Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 import { CounterService } from '../../counter/services/counter.service';
 import { StatisticsModel } from '../models/statistics.model';
+import { CountersLastStatistics } from '../responses/countersLastStatistics.response';
+import { CountersStatistics } from '../responses/countersStatistics.response';
 
 @Injectable()
 export class StatisticsService {
@@ -18,11 +20,11 @@ export class StatisticsService {
 	async create(statisticsReceived: CreateStatisticsDTO): Promise<StatisticsModel> {
 		const newStatistics: CreateStatisticsDTO = statisticsReceived;
 
-		const latestEntry = await this.findLatest();
+		const latestEntry = await this.findLatest(newStatistics.counter.id);
 
 		if (
 			!latestEntry ||
-			statisticsReceived.datetime.getTime() - latestEntry.datetime.getTime() > 60000
+			statisticsReceived.datetime.getTime() - latestEntry.datetime.getTime() > /* 600000 */ 5000
 		) {
 			const createdStatistics = await this.statisticsRepository.save(newStatistics);
 
@@ -43,20 +45,55 @@ export class StatisticsService {
 		return updatedLastStatistic;
 	}
 
-	async findLatest(): Promise<StatisticsModel> {
+	async findLatest(counterId: number): Promise<StatisticsModel> {
 		const latestIdEntry = await this.statisticsRepository.findOne({
+			where: { counter: { id: counterId } },
 			order: { id: 'DESC' },
 		});
 
 		return latestIdEntry;
 	}
 
-	async findOne(id: number): Promise<StatisticsModel> {
-		return this.statisticsRepository.findOne(id);
+	async findOne(id: number, options: FindOneOptions<StatisticsModel>): Promise<StatisticsModel> {
+		return this.statisticsRepository.findOne(id, options);
 	}
 
 	async findAll(): Promise<StatisticsModel[]> {
-		return this.statisticsRepository.find();
+		const test: StatisticsModel[] = await this.statisticsRepository.find();
+		// console.log(test);
+		return test;
+	}
+
+	async findFromCounters(countersIds: number[]): Promise<CountersLastStatistics[]> {
+		const counterStatistics: CountersLastStatistics[] = [];
+		let statistic: StatisticsModel;
+
+		// eslint-disable-next-line no-restricted-syntax
+		for (const counterId of countersIds) {
+			// eslint-disable-next-line no-await-in-loop
+			statistic = await this.findLatest(counterId);
+			if (statistic) counterStatistics.push({ id: counterId, statistics: statistic });
+		}
+
+		return counterStatistics;
+	}
+
+	async findGraphicsStatistics(countersIds: number[]): Promise<StatisticsModel[][]> {
+		const counterStatistics: StatisticsModel[][] = [[]];
+		let statistics: StatisticsModel[] = [];
+		// TODO obtener cada 10 minutos
+		// eslint-disable-next-line no-restricted-syntax
+		for (const counterId of countersIds) {
+			// eslint-disable-next-line no-await-in-loop
+			statistics = await this.statisticsRepository.find({
+				where: { counter: { id: counterId } },
+				order: { id: 'DESC' },
+				take: 10,
+			});
+			if (statistics) counterStatistics.push(statistics);
+		}
+
+		return counterStatistics;
 	}
 
 	// async findById(counterId: number): Promise<CounterModel> {

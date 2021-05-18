@@ -22,7 +22,7 @@ type UserModel {
   lastname: String!
 
   """Associated company"""
-  company: CompanyModel!
+  company: CompanyModel
 }
 
 enum Role {
@@ -44,7 +44,7 @@ type CounterModel {
   capacity: Float!
 
   """Associated company"""
-  company: CompanyModel!
+  company: CompanyModel
 }
 
 type CompanyModel {
@@ -79,13 +79,17 @@ type StatisticsModel {
 
   """Associated counter"""
   counter: CounterModel!
-  company: CounterModel!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type CountersLastStatistics {
+  id: Float!
+  statistics: StatisticsModel!
+}
 
 type RegisterCounterResponse {
   counter: CounterModel!
@@ -108,8 +112,11 @@ type Query {
   findCompany(id: Float!): CompanyModel!
   findCompanyByName(name: String!): CompanyModel!
   findAllCounters: [CounterModel!]!
-  findLatest: StatisticsModel!
+  findAllCompanyCounters(companyId: Float!): [CounterModel!]!
+  findLatest(counterId: Float!): StatisticsModel!
   findAllStatistics: [StatisticsModel!]!
+  findStatisticsFromCounters(countersIds: [Float!]!): [CountersLastStatistics!]!
+  findGraphicsStatistics(countersIds: [Float!]!): [[StatisticsModel!]!]!
 }
 
 type Mutation {

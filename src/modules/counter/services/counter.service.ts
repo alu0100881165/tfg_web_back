@@ -2,16 +2,19 @@ import { BadRequestException, Injectable, Logger, UnauthorizedException } from '
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCounterDTO } from 'src/dto/CreateCounter.dto';
 import { AuthUtils } from 'src/utils/auth.utils';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
+import { CompanyService } from '../../company/services/company.service';
 import { CounterModel } from '../models/counter.model';
+import { CompanyCounters } from '../responses/companyCounters.response';
 
 @Injectable()
 export class CounterService {
 	private logger = new Logger(CounterService.name, false);
 
 	constructor(
-		@InjectRepository(CounterModel) private counterRepository: Repository<CounterModel>
+		@InjectRepository(CounterModel) private counterRepository: Repository<CounterModel>,
+		private companyService: CompanyService
 	) {}
 
 	async create(counterRegist: CreateCounterDTO): Promise<CounterModel> {
@@ -52,12 +55,24 @@ export class CounterService {
 		return this.counterRepository.find();
 	}
 
+	async findOne(counterId: number, options: FindOneOptions<CounterModel>): Promise<CounterModel> {
+		return this.counterRepository.findOne(counterId, options);
+	}
+
 	async findById(counterId: number): Promise<CounterModel> {
 		return this.counterRepository.findOne(counterId);
 	}
 
 	async findUsername(username: string): Promise<CounterModel> {
 		return this.counterRepository.findOne({ where: { username } });
+	}
+
+	async findByCompanyId(companyId: number): Promise<CounterModel[]> {
+		const company = await this.companyService.findOne(companyId);
+
+		const counters = await this.counterRepository.find({ where: { company } });
+
+		return counters;
 	}
 
 	async usernameExists(username: string): Promise<boolean> {

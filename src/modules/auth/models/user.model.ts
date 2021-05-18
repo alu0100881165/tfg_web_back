@@ -48,7 +48,7 @@ export class UserModel {
 	// @Column({ type: 'integer', nullable: false })
 	// companyId: number;
 
-	@Field(() => CompanyModel, { description: 'Associated company' })
+	@Field(() => CompanyModel, { description: 'Associated company', nullable: true })
 	@ManyToOne(() => CompanyModel, company => company.users, {
 		nullable: false,
 	})

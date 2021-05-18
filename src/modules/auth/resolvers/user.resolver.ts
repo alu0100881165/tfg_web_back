@@ -1,11 +1,11 @@
 import { Logger } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { CreateUserDTO } from 'src/dto/CreateUser.dto';
 import { GraphQLCustomContext } from 'src/types/app.types';
 import { AuthUtils } from 'src/utils/auth.utils';
 
 import { CompanyModel } from '../../company/models/company.model';
 import { CompanyService } from '../../company/services/company.service';
+import { CounterService } from '../../counter/services/counter.service';
 import { UserModel } from '../models/user.model';
 import { UserService } from '../services/user.service';
 import { AuthResolver } from './auth.resolver';
@@ -16,7 +16,11 @@ import { AuthResolver } from './auth.resolver';
 export class UserResolver {
 	private logger = new Logger(AuthResolver.name);
 
-	constructor(private userService: UserService, private companyService: CompanyService) {}
+	constructor(
+		private userService: UserService,
+		private companyService: CompanyService,
+		private counterService: CounterService
+	) {}
 
 	@Query(() => [UserModel])
 	findAll(): Promise<UserModel[]> {
